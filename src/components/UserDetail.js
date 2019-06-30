@@ -37,19 +37,17 @@ class UserDetail extends Component {
         return(
             <div>
                 <br />
-                <Link className="btn grey" to="/">Back</Link>
-                <h1>{this.state.details.first_name}</h1>
+                <Link className="btn grey" to="/">Назад</Link>
+                <h1>{this.state.details.fio}</h1>
                 <ul className="collection">
-                    <li className="collection-item">First Name: {this.state.details.first_name}</li>
-                    <li className="collection-item">Last Name: {this.state.details.last_name}</li>
-                    <li className="collection-item">Second Name: {this.state.details.second_name}</li>
-                    <li className="collection-item">Address: {this.state.details.address}</li>
-                    <li className="collection-item">City: {this.state.details.city}</li>
-                    <li className="collection-item">Birthday: {new Date(this.state.details.birthday).toLocaleDateString()}</li>
-                    <li className="collection-item">Phone: {this.state.details.phone}</li>
+                    <li className="collection-item">ФИО: {this.state.details.fio}</li>
+                    <li className="collection-item">Адрес: {this.state.details.address}</li>
+                    <li className="collection-item">Город: {this.state.details.city}</li>
+                    <li className="collection-item">Дата рождения: {new Date(this.state.details.birthday).toLocaleDateString()}</li>
+                    <li className="collection-item">Телефон: {this.state.details.phone}</li>
                 </ul>
-                <Link className="btn" to={`/users/edit/${this.state.details.id}`}>Edit</Link>
-                <button onClick={this.onDelete.bind(this)} className="btn red right">Delete</button>
+                <Link className="btn" to={`/users/edit/${this.state.details.id}`}>Редактировать</Link>
+                <button onClick={this.onDelete.bind(this)} className="btn red right">Удалить</button>
             </div>
         )
     }

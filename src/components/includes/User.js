@@ -12,7 +12,7 @@ this.state = {
     render(){
         return (
             <li className="collection-item">
-            <Link to={`/users/${this.state.user.id}`}>{this.state.user.first_name}</Link>
+            <Link to={`/users/${this.state.user.id}`}>{this.state.user.fio}</Link>
             </li>
         )
     }

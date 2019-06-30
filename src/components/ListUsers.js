@@ -15,9 +15,7 @@ componentWillMount() {
     
     getUsers() {
         axios.get('http://localhost:3000/users').then(response => {
-            this.setState({users: response.data}, () => {
-                console.log(this.state)
-            })
+            this.setState({users: response.data})
         })
     }
     render() {
@@ -28,7 +26,7 @@ componentWillMount() {
         })
         return (
                 <div>
-                    <h1>Users</h1>
+                   <h1>Пользователи</h1>
                    <ul className="collection">
                         {users}
                    </ul>

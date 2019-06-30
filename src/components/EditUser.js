@@ -8,7 +8,15 @@ class EditUser extends Component {
         super(props)
         this.state = {
             fromYear:new Date().getFullYear() - 70,
-            toYear:new Date().getFullYear()
+            toYear:new Date().getFullYear(),
+            monthes: ['Январь', 'Февраль', 'Март', 'Апрель', 'Май','Июнь','Июль','Август','Сентябрь','Октябрь','Ноябрь', 'Декабрь'],
+            user: {
+                fio:'',
+                address:'',
+                city:'',
+                birthday: new Date(this.fromYear, 0, 1),
+                phone:''
+            }
         }
     }
     componentWillMount() {
@@ -21,7 +29,7 @@ class EditUser extends Component {
     editUser(newUser) {
         axios.request({
             method:"patch",
-            url: `http://localhost:3000/users/${this.state.id}`, 
+            url: `http://localhost:3000/users/${this.state.user.id}`, 
             data:newUser,
         }).then(response => {
             this.props.history.push('/')
@@ -32,20 +40,22 @@ class EditUser extends Component {
         let userId = this.props.match.params.id
         axios.get(`http://localhost:3000/users/${userId}`).then(response => {
             response.data.birthday = new Date(response.data.birthday);    
-        this.setState(response.data, () => {
-            this.initSelects();
-            this.setDayItems();
-        })
+            this.setState({user:response.data}, () => {
+                this.initSelects();
+                this.setDayItems();
+            })
         }, () => {
             console.log(this.state)
         })
         .catch(err => console.log(err))
     }
-    handleInputChange(e) {
-        this.setState({[e.target.name] : e.target.value});
+    _onChange(e) {
+        const user = {...this.state.user}
+        user[e.target.name] = e.target.value;
+        this.setState({user})
     }
     setDayItems() {
-        const lastDay = new Date(this.state.birthday.getFullYear(), this.state.birthday.getMonth(), 0).getDate();
+        const lastDay = new Date(this.state.user.birthday.getFullYear(), this.state.user.birthday.getMonth(), 0).getDate();
         if(this.state.dayItems && this.state.dayItems.length === lastDay) {
             return;
         }
@@ -56,81 +66,74 @@ class EditUser extends Component {
         });       
     }
     onDateChange(e) {
-        this.setDayItems();
+        const user = {...this.state.user}
+        const dateFields = {year:user.birthday.getFullYear(), month: user.birthday.getMonth(), day:user.birthday.getDate()}
+        dateFields[e.target.name] = e.target.value;
+        user.birthday = new Date(dateFields.year, dateFields.month, dateFields.day);
+        console.log(user.birthday);
+        this.setState({user}, () => {
+            this.setDayItems();
+        })
     }
-    createSelectItems(from, to) {
+    createSelectItems(from, to, arrValues) {
         let items = [];   
         for (let i = from; i <= to; i++) {             
-             items.push(<option key={i} value={i}>{i}</option>);   
+             items.push(<option key={i} value={i}>{arrValues ? arrValues[i] :  i}</option>);   
         }
         return items;
     }
     onSubmit(e) {
-        const user = {
-            id:this.state.id,
-            first_name: this.refs.first_name.value,
-            last_name: this.refs.last_name.value,
-            second_name: this.refs.second_name.value,
-            city: this.refs.city.value,
-            address: this.refs.address.value,
-            phone: this.refs.phone.value,
-            birthday: new Date(this.refs.year.value, this.refs.month.value - 1, this.refs.day.value)
-        }
-        this.editUser(user);
+        this.editUser(this.state.user);
         e.preventDefault();
     }
     render() {
-        if(!this.state || !this.state.id) {
-            return <div>Loading...</div>
+        if(!this.state || !this.state.user.id) {
+            return <div>Загрузка...</div>
         }
         return (
                 <div>
                     <br />
-                    <Link className="btn grey" to="/">Back</Link>
-                    <h1>Edit User</h1>
+                    <Link className="btn grey" to="/">Назад</Link>
+                    <h1>Изменить</h1>
                     <form onSubmit={this.onSubmit.bind(this)}>
                         <div className="input-field">
-                            <input type="text" name="first_name" ref="first_name" onChange={this.handleInputChange.bind(this)} defaultValue={this.state.first_name}/>
-                            <label htmlFor="first_name" className="active">First Name</label>
+                            <input name="fio" id="fio" required maxLength="100" className="validate" onChange={this._onChange.bind(this)} value={this.state.user.fio}/>
+                            <label htmlFor="fio" className="active">ФИО</label>
+                            <span className="helper-text" data-error="Обязательное поле"></span>
+
                         </div>
                         <div className="input-field">
-                            <input type="text" name="last_name" ref="last_name" defaultValue={this.state.last_name} onChange={this.handleInputChange.bind(this)}/>
-                            <label htmlFor="last_name" className="active">Last Name</label>
+                            <input name="city" id="city" value={this.state.user.city} onChange={this._onChange.bind(this)}/>
+                            <label htmlFor="city" className="active">Город</label>
                         </div>
                         <div className="input-field">
-                            <input type="text" name="second_name" ref="second_name" defaultValue={this.state.second_name} onChange={this.handleInputChange.bind(this)}/>
-                            <label htmlFor="second_name" className="active">Second Name</label>
+                            <input name="address" id="address" value={this.state.user.address} onChange={this._onChange.bind(this)}/>
+                            <label htmlFor="address" className="active">Адрес</label>
                         </div>
                         <div className="input-field">
-                            <input type="text" name="city" ref="city" defaultValue={this.state.city} onChange={this.handleInputChange.bind(this)}/>
-                            <label htmlFor="city" className="active">City</label>
+                            <input name="phone" id="phone" value={this.state.user.phone} onChange={this._onChange.bind(this)}/>
+                            <label htmlFor="phone" className="active">Телефон</label>
                         </div>
                         <div className="input-field">
-                            <input type="text" name="address" ref="address" defaultValue={this.state.address} onChange={this.handleInputChange.bind(this)}/>
-                            <label htmlFor="address" className="active">Address</label>
-                        </div>
-                        <div className="input-field">
-                            <input type="text" name="phone" ref="phone" defaultValue={this.state.phone} onChange={this.handleInputChange.bind(this)}/>
-                            <label htmlFor="phone" className="active">Phone</label>
-                        </div>
-                        <div className="input-field">
-                            <select name="year" ref="year" onChange={this.onDateChange.bind(this)} defaultValue={this.state.birthday.getFullYear()}>
+                            <select name="year" id="year" onChange={this.onDateChange.bind(this)} value={this.state.user.birthday.getFullYear()}>
                                 {this.createSelectItems(this.state.fromYear, this.state.toYear)}                            
                             </select>
+                            <label htmlFor="year">Год</label>
+
                         </div>
                          <div className="input-field">
-                            <select name="month" ref="month" onChange={this.onDateChange.bind(this)} defaultValue={(this.state.birthday.getMonth() + 1)}>
-                                {this.createSelectItems(1,12)}                            
+                            <select name="month" id="month" onChange={this.onDateChange.bind(this)} value={this.state.user.birthday.getMonth()}>
+                                {this.createSelectItems(0,11, this.state.monthes)}                            
                             </select>
-                            <label htmlFor="month">Month</label>
+                            <label htmlFor="month">Месяц</label>
                         </div>
                         <div className="input-field">
-                            <select name="day" ref="day" defaultValue={this.state.birthday.getDate()}>
+                            <select name="day" id="day" onChange={this.onDateChange.bind(this)} value={this.state.user.birthday.getDate()}>
                              {this.state.dayItems}                            
                             </select>
-                            <label htmlFor="day">Day</label>
+                            <label htmlFor="day">День</label>
                         </div>
-                        <input type="submit" value="Save" className="btn" />
+                        <input type="submit" value="Сохранить" className="btn" />
                     </form>
                 </div>
         )
