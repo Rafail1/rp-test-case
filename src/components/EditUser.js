@@ -55,7 +55,7 @@ class EditUser extends Component {
         this.setState({user})
     }
     setDayItems() {
-        const lastDay = new Date(this.state.user.birthday.getFullYear(), this.state.user.birthday.getMonth(), 0).getDate();
+        const lastDay = new Date(this.state.user.birthday.getFullYear(), this.state.user.birthday.getMonth() + 1, 0).getDate();
         if(this.state.dayItems && this.state.dayItems.length === lastDay) {
             return;
         }

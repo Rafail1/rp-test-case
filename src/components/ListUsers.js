@@ -26,7 +26,7 @@ componentWillMount() {
         })
         return (
                 <div>
-                   <h1>Пользователи</h1>
+                   <h1>Список</h1>
                    <ul className="collection">
                         {users}
                    </ul>

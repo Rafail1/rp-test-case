@@ -66,7 +66,11 @@ class AddUser extends Component {
         e.preventDefault();
     }
     setDayItems() {
-        const lastDay = new Date(this.state.user.year || this.state.fromYear, this.state.user.month || 0, 0).getDate();
+        const user = {...this.state.user}
+
+        console.log( user.birthday.getMonth())
+        const lastDay = new Date(user.birthday.getFullYear(), user.birthday.getMonth() + 1, 0).getDate();
+        console.log(lastDay)
         if(this.state.dayItems.length && this.state.dayItems.length === lastDay) {
             return;
         }
@@ -102,7 +106,7 @@ class AddUser extends Component {
                 <div>
                     <br />
                     <Link className="btn grey" to="/">Назад</Link>
-                    <h1>Add User</h1>
+                    <h1>Добавить</h1>
                     <form onSubmit={this.onSubmit.bind(this)}>
                         <div className="input-field">
                             <input type="text" name="fio" id="fio" required maxLength="100" className="validate" value={this.state.user.fio} onChange={this._onChange.bind(this)} />

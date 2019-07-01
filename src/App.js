@@ -2,8 +2,6 @@ import React from 'react';
 import {Link} from 'react-router-dom'
 import './App.css';
 import Main from './components/Main'
-import AddUser from './components/AddUser'
-import EditUser from './components/EditUser'
 import Navbar from './components/Navbar'
 import 'materialize-css/dist/css/materialize.min.css';
 const App = () => (
